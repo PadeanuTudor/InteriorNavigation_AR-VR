@@ -1,0 +1,26 @@
+Title: Image-Based Localization for Indoor Environment Using Mobile Phone
+Author(s): Yewei Huang, Haiting Wang, Kefei Zhan, Junqiao Zhao, Popo Gui, Tiantian Feng (work funded through Tongji University programmes; tested in the Tongji University History Museum)
+Group: Visual positioning against a 3D map / image database
+Published: The International Archives of the Photogrammetry, Remote Sensing and Spatial Information Sciences XL-4/W5, 211-215, 2015 (Indoor-Outdoor Seamless Modelling, Mapping and Navigation workshop, Tokyo; open access)
+
+
+WHAT IT DOES
+I read the whole paper (it is short, 5 pages). The user localises by taking one photo with the phone; no infrastructure is needed. Offline, someone photographs the building with at least 70% overlap between neighbouring images, camera roughly perpendicular to the wall and the walking path, avoiding mirrors, glass, plants and light sources. Images are resized to 800x600 and matched to their neighbours; the authors compared SIFT, SURF and ASIFT and chose ASIFT because it gave cleaner matches (649 matched points in their example) and fewer outliers for RANSAC. Bundle adjustment gives a sparse point cloud and a pose for every image in one coordinate frame (defined by the first image). Each image also gets a semantic tag such as "2nd floor, room 3", which they say is enough for localisation without global coordinates. At query time the phone image is histogram-equalised, then a two-stage search runs: a cheap image histogram ranks the database, then a three-level quadtree of HoG blocks is compared with a moving window (with an image pyramid for scale) to find a similar image; ASIFT matching and relative orientation against that image give the camera pose. If matching fails the next image in the ranked list is tried. Tested with an iPhone 5s in the second and third floors of a university history museum; the result is shown as a red dot on the floor plan in an Android app.
+
+
+RELEVANT TO MY WORK
+It is the simplest version of "take a photo, find the nearest known view, get a pose" and it says plainly what the problems are: matching cost grows with the database, so a cheap pre-filter is needed. It also discusses how to photograph the building (overlap, angle, what to avoid), and notes that rich and poor texture scenes were examined, which is the realistic issue for plain corridors. Useful as a baseline to compare my landmark approach against.
+
+
+USE IT FOR
+- Baseline pipeline in related work (database of posed images, two-stage search, relative orientation).
+- Survey guidelines for the reference photos (overlap, viewing angle, surfaces to avoid).
+- Semantic tags per image (floor/room) instead of global coordinates.
+- Motivation for pre-filtering before expensive feature matching.
+
+
+CAVEATS
+- Preliminary: one example query is shown and the authors say the precision "still needs evaluation", so there are no accuracy numbers to cite.
+- Slow in this form: about 20 s to match one image pair with ASIFT, and only photo capture and enhancement run on the phone; searching and matching were still on a desktop, with a client-server design planned over 4G.
+- HoG is not rotation invariant, so it assumes photos are taken upright (portrait or landscape).
+- Needs a full photo survey of the building, and was tested only in a museum.

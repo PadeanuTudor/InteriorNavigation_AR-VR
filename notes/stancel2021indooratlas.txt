@@ -1,0 +1,26 @@
+Title: Indoor Atlas Service as a Tool for Building an Interior Navigation System
+Author(s): Martin Štancel, Ján Hurtuk, Michal Hulič, Jakub Červeňák (Department of Computers and Informatics, Technical University of Košice)
+Group: Baseline (no camera): magnetic positioning and routing
+Published: Acta Polytechnica Hungarica 18(9), 87-110, 2021 (open access)
+
+
+WHAT IT DOES
+I read the whole paper. It builds an Android (Java) indoor navigation prototype in two parts. Positioning comes from the IndoorAtlas service, which uses magnetic fingerprinting: steel and other ferromagnetic material in a building distorts the Earth's magnetic field, so each building has a unique "magnetic fingerprint". In an offline phase someone walks predefined paths with the MapCreator app while the phone records magnetometer readings tied to an uploaded floor plan; online, the phone's live readings are matched against that fingerprint database. Routing: the building is a graph whose nodes carry an id, name, latitude, longitude, floor and a real-or-logical flag, and whose edges are weighted by distance computed with the haversine formula. The authors compare Dijkstra, Floyd-Warshall and Bellman-Ford and pick Dijkstra (single start and end point, no negative edges). To avoid routes through walls, the floor-plan bitmap is checked for wall-coloured pixels along each candidate path.
+Experiments were done in a building in Košice (Slovakia) in two phases (one room, then the whole building), two measurements each, with one phone model: mean error 69.5 cm in the room and 78.4 cm in the building, about 74 cm overall, inside the vendor's stated 0.1 to 2 m range. They attribute errors to imperfect straight-line walking, nearby electrical interference and using a phone model IndoorAtlas does not recommend.
+
+
+RELEVANT TO MY WORK
+It is the non-camera counterpart of what I want to build, so it shows what the alternative costs: an offline mapping walk, a vendor service, and magnetometer sensitivity. Its related-work section also dismisses camera positioning (poor lighting, large empty rooms), which is exactly the objection my project has to answer. Its graph model (nodes with floor and logical/real flags, haversine edge weights) and Dijkstra routing do not depend on how position is obtained, so I can reuse that layer under a camera-based localiser. The roughly 74 cm figure gives me an accuracy target to compare against.
+
+
+USE IT FOR
+- Related work: infrastructure-free, non-visual positioning with magnetic fingerprints, and its comparison table of technologies.
+- The routing / building-graph design (nodes, edges, floors, logical nodes) and the choice of Dijkstra.
+- Wall-avoidance check against the floor-plan bitmap.
+- A baseline accuracy number (about 0.74 m) for comparison.
+
+
+CAVEATS
+- The evaluation is tiny: two measurements per phase and one phone model, so it shows the vendor's claim is plausible rather than testing robustness.
+- Depends on a commercial service and on the magnetic environment, which can change with equipment or renovations.
+- No camera, no AR.

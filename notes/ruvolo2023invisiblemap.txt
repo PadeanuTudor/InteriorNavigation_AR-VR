@@ -1,0 +1,26 @@
+Title: The Invisible Map: Visual-Inertial SLAM with Fiducial Markers for Smartphone-based Indoor Navigation
+Author(s): Paul Ruvolo, Ayush Chakraborty, Rucha Dave, Richard Li, Duncan Mazza, Xierui Shen, Raiyan Siddique, Krishna Suresh (Olin College of Engineering)
+Group: AR arrow on the camera view (map building / marker landmarks)
+Published: arXiv:2310.10862 (cs.RO), 16 Oct 2023 (preprint, open access)
+
+
+WHAT IT DOES
+I skimmed the abstract, introduction, related work and the outline of the method; I did not get to the numeric results, so this note is partial. The system builds a building-scale 3D map from a smartphone. A person walks through the building with the phone, which records visual-inertial odometry (VIO) and detects AprilTag fiducial markers on the walls. Everything is combined in a Graph SLAM problem (g2o): the optimisation variables are the 6-DoF poses of the landmarks (tags) and of the phone along the walk. The walked path doubles as the set of navigable paths: the line segments are turned into a weighted graph, self-intersections are detected and extra nodes inserted, and shortest paths are computed on it. When someone navigates, seeing a tag acts as an absolute fix that corrects the VIO drift. The authors also study mapping hyperparameters (how much to trust odometry vs. tag observations) and propose ways to tune them with and without a ground-truth dataset, and they ship it in a public smartphone app. Motivation: pedestrians, especially blind or low-vision people, in unfamiliar buildings.
+
+
+RELEVANT TO MY WORK
+It is a worked example of the "landmarks + continuous tracking" structure I want: known landmarks give absolute position, VIO fills the gaps. The tags are the landmarks here, but the map structure (landmark poses plus a walkable path graph, optimised together) would stay the same if the landmarks were natural features, signs or distinctive corners. It also avoids hand-drawn floor plans, because the map is created by walking.
+
+
+USE IT FOR
+- Map-building pipeline: Graph SLAM over landmark poses and phone poses, path graph from the walked trajectory.
+- Hyperparameter tuning method for new buildings (including when no ground truth exists).
+- Argument for why landmark fixes are needed on top of VIO (drift causes large-scale localisation failures over time).
+- A marker-based baseline in related work.
+
+
+CAVEATS
+- It still needs fiducial markers installed, so it does not solve my "recognise a natural unique spot" question by itself.
+- Preprint, and I have not read the evaluation section, so I cannot quote accuracy numbers yet.
+- Navigation output is aimed at accessibility (guidance for blind users); I did not see an AR arrow overlay described.
+- Depends on the phone's VIO (ARKit-style), so quality varies with the device.

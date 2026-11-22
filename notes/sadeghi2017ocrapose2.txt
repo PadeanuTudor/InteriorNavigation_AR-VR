@@ -1,0 +1,26 @@
+Title: OCRAPOSE II: An OCR-based Indoor Positioning System Using Mobile Phone Images
+Author(s): Hamed Sadeghi, Shahrokh Valaee (University of Toronto), Shahram Shirani (McMaster University)
+Group: Landmark / text / object recognition
+Published: arXiv:1704.05591, April 2017 (preprint, open access). The reference list points to an earlier conference version, OCRAPOSE (ICASSP 2015).
+
+
+WHAT IT DOES
+I read the whole paper apart from the appendices. It uses text on signs (room numbers, gate labels, a parking-level word) as landmarks. OCR (Tesseract, after MSER-based text detection) reads the text in the user's photo, and a floor plan tagged with where each text is located gives a rough position, so no image database and no feature matching are needed. The position is then refined from geometry in the single photo: the angle of view comes from the horizontal vanishing point, and the distance comes from the width of the detected text box in the image. The introduction splits earlier work into image-retrieval-based and landmark-based methods and notes that retrieval fails in repetitive scenery (doors, windows and handles that look the same everywhere).
+Results against two baselines (Liang et al. 2013 retrieval, Torii et al. 2011 interpolation): in a university building, recognition 76% and mean error 0.68 m (the retrieval baseline recognised 7.4% of queries; the other baseline had 0.80 m error); in a second building, 61% vs 58% recognition and 0.93 m vs 1.11 and 1.44 m error; in a parking lot with a single word on the wall, 0.51 m vs 1.47 and 2.08 m. Its error stays the same when the reference database is made sparser, while the baselines get worse.
+
+
+RELEVANT TO MY WORK
+It is the clearest answer I have found to "the camera sees something unique and knows where I am" without photographing the building: all I need is a floor plan tagged with the texts and their sizes. Text is also exactly what exists in most buildings (room numbers). Its two-way taxonomy of image-based localisation gives me a ready structure for my own related-work section. It also gets metric position and viewing angle from one photo, so it can feed an arrow.
+
+
+USE IT FOR
+- Landmark recognition by text, with the distance-and-angle estimate from a single sign.
+- Related-work taxonomy: image retrieval vs landmark-based methods.
+- Baselines to look up (Liang et al. 2013, Torii et al. 2011) and the earlier ICASSP 2015 version.
+- Pair with INSUS's sign-reading follow-up (fajrianti2024reset), which uses YOLOv8 plus PaddleOCR instead of classical OCR.
+
+
+CAVEATS
+- Strong assumptions: roll about zero, small tilt (roughly within 20 degrees), and the user must point the phone at the sign (the pan angle is the angle of view).
+- Needs legible text; plain walls or repeated text on different floors would be ambiguous.
+- Preprint, 2017-era OCR; results come from a few sites and the recognition rates (61-76%) leave plenty of failures.

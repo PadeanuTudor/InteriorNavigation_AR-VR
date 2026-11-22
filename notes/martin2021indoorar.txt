@@ -1,0 +1,24 @@
+Title: Indoor Navigation using Augmented Reality
+Author(s): Ashly Martin, John Cheriyan, JJ Ganesh, Joel Sebastian, Jayakrishna V (Amal Jyothi College of Engineering, Kottayam, India)
+Group: AR arrow on the camera view (marker-based)
+Published: EAI Endorsed Transactions on Creative Technologies 8(26), e1, Feb 2021 (open access, CC BY)
+
+
+WHAT IT DOES
+I read the whole paper. It is a simple marker-based AR navigation app built with Unity and Vuforia. Frame markers (Vuforia offers 512 of them) are stuck on floors or walls at entrances and points of interest; when the user scans one, the app knows where they are and then shows on-screen arrows one by one towards the chosen destination, and the destination can be changed during navigation. Firebase handles user accounts and stored data. The related-work section reviews earlier AR navigation papers, including a comparison of marker types (Vuforia against AprilTag and ArUco, from La Delfa et al., 2015) and the Al Delail et al. 2013 paper that combines image recognition with inertial tracking.
+
+
+RELEVANT TO MY WORK
+It is a minimal example of exactly the UI I want (arrows over the camera view) and of the weakest way to get position: markers placed in the building. That makes it a useful lower bound. The more valuable part for me is the reference list, which points to marker-comparison and AR-navigation papers I can follow up.
+
+
+USE IT FOR
+- Describing the simplest baseline (marker scan, then arrows) in related work.
+- Leads: La Delfa et al. (visual marker evaluation, 2015), Mulloni et al. (activity-based AR indoor navigation), Al Delail et al. (2013).
+- Practical stack idea: Unity plus an AR SDK plus a cloud database for a quick prototype.
+
+
+CAVEATS
+- There is no quantitative evaluation: the results section is screenshots of the app, so I should not cite it for accuracy or usability claims.
+- Markers have to be installed and maintained, and tracking between markers is not described in detail.
+- I would treat it as a low-evidence source and cite it only for the design idea.

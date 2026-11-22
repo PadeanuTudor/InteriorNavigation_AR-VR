@@ -1,0 +1,29 @@
+Title: Resource-efficient and Automated Image-based Indoor Localization (HAIL)
+Author(s): Qun Niu, Mingkuan Li, Suining He, Chengying Gao, S.-H. Gary Chan, Xiaonan Luo (Sun Yat-sen University, HKUST, Guilin University of Electronic Technology)
+Group: Landmark / text / object recognition
+Published: ACM Transactions on Sensor Networks 15(2), Article 19, Feb 2019 (free author copy hosted at HKUST)
+
+
+WHAT IT DOES
+I read the whole paper. HAIL localises a person from photos of landmarks (store logos, posters) entirely on the phone, without a server. Offline, a surveyor takes about 6-7 photos per landmark; SURF features are extracted, and each feature gets votes: +1 for every match found in the same landmark's other images, -1 for every match found in a different landmark. Only the top-voted "distinguishing" features are kept, so the database shrinks a lot (for 84 landmarks in a food plaza the full feature set is about 275-316 MB, and HAIL's database is 2 MB after selection and compression; the paper quotes both 275 and 316 MB for the full size). Features go into a k-d tree. Online, the user takes about three photos of nearby landmarks while turning. For each photo, a kurtosis measure of the "matched features per landmark" distribution plus logistic regression decides automatically whether the best match can be trusted (F-score 92.3%), so nobody has to confirm a shortlist. Compass and gyroscope readings then give a candidate region (a sector around each landmark), the floor plan removes impossible places, and an optimisation over angle differences, with distance limits, picks the final position.
+Results: in a food plaza (about 6,000 m2, 84 landmarks) and a shopping mall (about 16,000 m2, 51 landmarks) it cut localisation error by more than 20% and time by more than 40% against Sextant and MoVIPS. Localisation takes under 4 s in total (about 3.7 s image matching for three photos, 12 ms for the position), and one query uses under 0.07% of the battery. Error depends on image resolution (about 4.0 m at 320x240 vs about 2.3 m at 1400x1050). A 57-person questionnaire rated it more automatic and convenient than Sextant. In a sparse HKUST office corridor, adding posters and OCR of door plates improved accuracy; when a door number is read, the position is taken as exact.
+
+
+RELEVANT TO MY WORK
+This is the most direct "the camera sees a distinctive spot and knows where I am" system I have found that runs on the phone. Two things I want to reuse: first, the automatic confidence gate (kurtosis of match counts) for deciding when a recognition is reliable enough to reset my position; second, the storage tricks (keep only features that distinguish a landmark from all others). It also confirms the failure case I expected: landmark methods struggle in featureless, repetitive corridors and need extra clues such as posters or door plates read by OCR, which links to the sign-recognition papers.
+
+
+USE IT FOR
+- On-device landmark matching design: feature selection by voting, k-d tree search, small database.
+- Trust/confidence decision for accepting a visual fix (kurtosis + logistic regression).
+- Fusing a landmark fix with compass/gyroscope and floor-plan constraints.
+- Parameter guidance: about 6 training photos per landmark, 500 features per landmark, 800x600 images, three query photos.
+- Evaluation design: matching accuracy, localisation error CDF, time, battery drain, user study.
+
+
+CAVEATS
+- Accuracy is metre-level (a few metres), not sub-metre, and it needs three deliberate photos of different landmarks with compass readings, so it is a "locate me" action, not continuous guidance or an AR arrow.
+- SURF-era hand-crafted features; a modern learned descriptor would probably do better, but I would have to re-check the storage and timing claims.
+- Tested mostly in shopping venues with logo-rich storefronts. The sparse office result relies on OCR of door plates and on narrow corridors.
+- Landmark positions have to be annotated on an accurate floor plan, and the training photos have to be taken by someone.
+- The published version is ACM's; the free PDF is the authors' copy on their university site.

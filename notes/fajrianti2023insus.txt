@@ -1,0 +1,28 @@
+Title: INSUS: Indoor Navigation System Using Unity and Smartphone for User Ambulation Assistance
+Author(s): Evianita Dewi Fajrianti, Nobuo Funabiki, Sritrusta Sukaridhoto, Yohanes Yohanie Fridelin Panduman, Kong Dezheng, Fang Shihao, Anak Agung Surya Pradhana (Okayama University, PENS Surabaya, INSTIKI Bali)
+Group: AR arrow on the camera view
+Published: Information 14(7), 359, 2023 (open access, CC BY)
+
+
+WHAT IT DOES
+I skimmed the whole paper. INSUS is an Android app that draws 3D arrows on the camera view to lead the user to a chosen room. The start position is fixed by scanning a QR code on the wall. After that, ARCore visual SLAM plus the gyroscope track my movement. The building is modelled by hand in Blender as a low-poly 3D model (about 5,900 triangles for the Okayama engineering building, about 8,100 polygons for the PENS building) and imported into Unity. Unity's NavMesh with A* finds the route. Arrows only appear once ARCore has detected a floor plane. Because SLAM drifts, the user is asked to rescan a QR code to re-calibrate. Logs and positions go to an IoT server (SEMAR) over REST/JSON.
+Evaluation: two buildings (Okayama #2 Engineering Building, four floors; PENS Graduate Building, floors 9-10), two phones. QR detection accuracy was above 80% when the phone was held at 60-100 degrees, and low at 30-45 degrees. Navigation success was also above 80% at 60-100 degrees and poor at 0-45 degrees, because a camera pointing at the floor sees no features for SLAM. Disturbances (shaking, changing walking speed) made almost no difference. A PIECES-based questionnaire (5-point Likert) found 100% of respondents agreed it was accurate, 80% useful, 76% would use it again, 86% easy to use, and 96% said it can be improved.
+
+
+RELEVANT TO MY WORK
+This is the closest published match to what I want to build: an arrow drawn on the live camera view, like Live View outdoors. The weak point is the position fix. It needs a QR code on the wall, and that is exactly the slot where a recognised landmark, sign or distinctive corner could go instead. The authors say in their conclusion that they plan to add landmark object recognition, which supports that direction. The drift problem and the rescan idea show why I will need periodic fixes anyway.
+
+
+USE IT FOR
+- Reference architecture: initial fix, then ARCore/SLAM tracking, then arrow on a detected floor plane.
+- Building the walkable map: floor plan -> low-poly 3D model -> NavMesh -> A* (cheap alternative to a point cloud).
+- Evaluation design: success rate vs. phone tilt angle, with and without disturbance, plus a PIECES/Likert questionnaire.
+- Practical rule of thumb for my app: tell the user to hold the phone roughly upright (60-100 degrees).
+
+
+CAVEATS
+- Needs QR codes placed in the building and a hand-made 3D model of every floor.
+- I only have the thresholds from the text. The per-case success-rate numbers are in Table 8, which I did not extract, so I should read it before quoting figures.
+- Test users were students in two buildings; the paper does not report positional error in metres, only success rates and survey answers.
+- Tied to Android/ARCore and Unity.
+- A follow-up paper from the same group (Network 2024) replaces the QR reset with sign recognition, see fajrianti2024reset.

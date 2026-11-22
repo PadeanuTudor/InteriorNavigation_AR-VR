@@ -1,0 +1,28 @@
+Title: Indoor Topological Localization Using a Visual Landmark Sequence
+Author(s): Jiasong Zhu, Qing Li, Rui Cao, Ke Sun, Tao Liu, Jonathan M. Garibaldi, Qingquan Li, Bozhi Liu, Guoping Qiu (Shenzhen University, University of Nottingham, Henan University of Economics and Law)
+Group: Landmark / text / object recognition
+Published: Remote Sensing 11(1), 73, 2019 (open access, CC BY). Journal extension of their GeoAI 2017 workshop paper.
+
+
+WHAT IT DOES
+I read the whole paper. The method (VLSIL) localises a walking person from phone video without any image database. Landmarks are ordinary fixed objects: office doors (door plus doorplate), fire extinguishers, stairs, elevators, toilet tags and corridor corners/intersections. Video frames are sampled at about 3 fps, selective search proposes 300 patches per frame, and a fine-tuned AlexNet (only the output layer is retrained, 10 classes including "wall/background") labels them. Training used about 1,300 images, partly from the internet so it can work in a new building without retraining. The detected landmark types, in the order they appear, are matched against a topological map (a directed graph built by hand from the floor plan) with a second-order hidden Markov model and an extended Viterbi algorithm. Second order means the walking direction is included, which removes a lot of ambiguity. A multiple-object landmark that is only partly seen is handled with a probability matrix.
+Experiments: 1.9 hours of video from 5 volunteers with 3 phones, in two Nottingham office buildings (54 and 65 landmarks), 7 routes, phone worn on the upper arm looking sideways. Object recognition accuracy was 98.6% overall (ANN on Gist features 81.8%, SVM 44.3%), and all landmarks on all routes were detected. With a known start, all 7 routes were localised. With an unknown start, 5 routes ended with a single candidate path and 2 routes still had two candidates. The plain HMM failed to localise without a known start (for Route 6, 18,346 possible paths vs. 2 for the second-order model). Route 1 was localised after 6 landmarks and Route 7 after 9 (unknown start), or after 3 with a known start.
+
+
+RELEVANT TO MY WORK
+It answers the "every corridor looks the same" problem that breaks single-image methods: one landmark is ambiguous, but the order of landmarks along a route is not. It needs no photo database, only the floor plan and a landmark detector, and it treats corners/intersections as a landmark class, close to my "unique corner" idea. A known start (for example from a QR code or a sign) helps a lot, which suggests a hybrid with the sign-reading papers. Because the model includes walking direction, it also gives me a direction of travel, which an arrow needs.
+
+
+USE IT FOR
+- Disambiguating similar places with sequences instead of single images.
+- Landmark classes that already exist in buildings (doors, extinguishers, stairs, lifts, toilets) and a detector trained once for all buildings.
+- Building the topological map from a floor plan, and the HMM2/Viterbi matching.
+- Experiment design: number of landmarks needed to localise, effect of known vs. unknown start, comparison against a plain HMM.
+
+
+CAVEATS
+- Topological localisation only: the output is a node on the map, not a metric position or heading, so I would still need SLAM/ARCore for the arrow between nodes.
+- Not real time: about 7 s per landmark image (3-4 s selective search plus about 3 s for 300 patches through the CNN); the authors say newer detectors could fix this. Matching itself is fast (0.043 s per route).
+- Needs several landmarks before it is certain (6 to 9 in the harder building with an unknown start), and a gap in the video breaks the sequence.
+- The topological map is built by hand, side-view capture on the upper arm is unusual, and only office corridors in two buildings were tested. AlexNet is an old detector.
+- Doorplate text was not used because of motion blur.

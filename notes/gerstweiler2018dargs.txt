@@ -1,0 +1,27 @@
+Title: DARGS: Dynamic AR Guiding System for Indoor Environments
+Author(s): Georg Gerstweiler, Karl Platzer, Hannes Kaufmann (Vienna University of Technology, TU Wien)
+Group: AR arrow on the camera view (guidance and path visualisation)
+Published: Computers 7(1), 5, 2018 (open access, CC BY)
+
+
+WHAT IT DOES
+I skimmed the whole paper. DARGS is not a localisation method. It is a path-calculation and visualisation layer for AR guidance that assumes the user's position and viewing direction are already known (from SLAM, RGB-D tracking, anything). Normal A*/Dijkstra paths hug walls and are shown as static arrows, and with a small AR field of view the user has to hunt for the arrow. DARGS builds a navigation mesh (Recast) from a 3D model of the building, finds an A* corridor, then bends the path so that a part of it always lies inside the current field of view (the "FOVPath"). Parts: a "Middle Path" that pulls the route towards the middle of corridors, a "Wall Path" for when the user looks straight at a wall, and a recalculation rule that checks how many path points are still visible. Server computes, a HoloLens client renders a particle-flow path. Timing: roughly 92 ms per path update for a 20 m2 view and a 50 m path, and about 14 updates per second with a 10 m2 view.
+User study: 16 participants, first task, all found all five targets with both paths and rated the FOVPath as intuitive (mean 6.37/7). 12 participants, second task (stand in the middle of a room and find 8 targets): rating of "how well could I anticipate the direction" was 6.08 for FOVPath vs 2.83 for the plain A* path, and median completion time 23.3 s vs 33.9 s. SUS score 87.7 (FOVPath) vs 84.8 (A* path).
+
+
+RELEVANT TO MY WORK
+My app needs more than a position fix: the arrow has to make sense at the moment the user has just been localised and is still disoriented, which is exactly where this paper finds the biggest benefit (the first few seconds). It also reviews how earlier AR navigation papers did the arrow (static arrows at markers, a 3D arrow rotating with the compass, a 2D mini-map), and it splits localisation into "key-point" tracking (markers or recognised images at certain spots) and continuous tracking. That is the same split I am making between landmark fixes and SLAM in between. It is explicit that the guiding layer should be independent of the tracking system, so it would sit on top of a landmark-based localiser.
+
+
+USE IT FOR
+- Arrow / path visualisation design: keep guidance visible regardless of where the phone points; show direction at the start of guidance; handle "user is facing a wall".
+- A taxonomy for related work: key-point localisation vs continuous tracking, and arrows vs path vs avatar visualisations.
+- User-study design (task completion time, Likert items, SUS).
+- Navmesh from a 3D model (Recast/Unity) as the route layer.
+
+
+CAVEATS
+- Tested on a HoloLens headset, not on a phone. A phone has a hand-held view, so the FOV logic would need rethinking; the authors list smartphones as future work.
+- It needs a 3D model of the building and a tracking system that already works. There is no localisation contribution.
+- The path calculation runs on a laptop (i7, GTX 880M) over Wi-Fi, so on-device performance is unknown.
+- Small study: 16 and 12 participants, one environment (about 200 m2).
